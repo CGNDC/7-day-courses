@@ -1,0 +1,58 @@
+void addProduct(Product product){
+        products.add(product);
+    }
+
+    ArrayList<Product> getAllProducts(){
+        return this.products
+    }
+
+    void printAllProducts(){
+        for(int i = 0; i < products.size(); i++){
+            products.get(i).print();
+        }
+
+        for(int i = 0; i < product.size(); i++){
+            System.out.println(product.get(i).toString());
+        }
+        for(int i = 0; i < product.size(); i++){
+            Product p = product.get(i);
+            System.out.println("---");
+            if(p instanceof Car){
+                Car car = (Car)p;
+                System.out.println("Product is a car: " + car.getMake() +
+                    ", " + car.getModel());
+            }
+            if(p instanceof Laptop){
+                Laptop laptop = (Laptop)p;
+                System.out.println("Product is a laptop: " + laptop.getBrand() +
+                    ", " + laptop.getMemory());
+            }
+            System.out.println("Complete details: " + p.toString());
+            System.out.println("---");
+            System.out.println();
+        }
+        for(int i = 0; i < product.size(); i++){
+            Product p = product.get(i);
+            System.out.println("---");
+            if (p instanceof Printable){
+                Printable printable = (Printable)p;
+                printable.print();
+            } else {
+                System.out.println(product.get(i).toString());
+            }
+        }
+    }
+
+    public void summaryReport(){
+        for(int i = 0; i < products.size(); i++){
+
+        }
+    }
+
+    public void searchProduct(String arg){
+
+    }
+
+    public void searchProduct(String arg1, String arg2){
+
+    }
