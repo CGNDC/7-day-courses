@@ -23,8 +23,12 @@
             var ctx = c.getContext("2d");
             ctx.fillStyle = "#99b4ca";
             ctx.fillRect(0, 0, c.width, c.height);
-            ctx.fillStyle = "#00447c";
-            ctx.fillRect(c.width/2-5, c.height/2-5, 10, 10);
+            for(var i = 0; i < c.width; i++){
+                for(var j = 0; j < c.height; j++){
+                    ctx.fillStyle = "#00447c";
+                    ctx.fillRect((i * 12), (j * 12), 10, 10);
+                }
+            }
         }
         update();
     </script>
