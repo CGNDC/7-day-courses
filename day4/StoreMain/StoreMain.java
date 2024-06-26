@@ -434,17 +434,17 @@ class ProductDatabase{
             while (scan.hasNextLine()) {
                 Products prod = new Products();
                 String data = scan.nextLine();
-                tempQuote.setQuotes(data.substring(0, nthIndex(data, '@', 1)));
-                tempQuote.setReference(data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)));
-                tempQuote.setCategory(data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)));
+                Products.setQuotes(data.substring(0, nthIndex(data, '@', 1)));
+                Products.setReference(data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)));
+                Products.setCategory(data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)));
                 try{
                     int number = Integer.parseInt(data.substring(nthIndex(data, '@', 3)+1, data.length()));
-                    tempQuote.setCounter(number);
+                    Products.setCounter(number);
                 }
                 catch (NumberFormatException ex){
                     ex.printStackTrace();
                 }
-                this.quotes.add(tempQuote);
+                this.quotes.add(Products);
             }
             return true;
         } catch (FileNotFoundException e) {

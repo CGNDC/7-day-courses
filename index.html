@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+<body onload="onResize()" onresize="onResize()" style="margin: 0px">
+    <canvas id="mycanvas" width="400" height="400">
+    </canvas>
+    <script>
+        function onResize(){
+            var c = document.getElementById("mycanvas");
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+            update();
+        }
+        function update(){
+            var c = document.getElementById("mycanvas");
+            var ctx = c.getContext("2d");
+            ctx.fillStyle = "#99b4ca";
+            ctx.fillRect(0, 0, c.width, c.height);
+            ctx.fillStyle = "#00447c";
+            ctx.fillRect(c.width/2-5, c.height/2-5, 10, 10);
+        }
+        update();
+    </script>
+</body>
+</html>
