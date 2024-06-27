@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+<body onload="onResize()" onresize="onResize()" style="margin: 0px">
+    <canvas id="mycanvas" width="400" height="400">
+    </canvas>
+    <script>
+        function onResize(){
+            var c = document.getElementById("mycanvas");
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+            update();
+        }
+        function update(){
+            var c = document.getElementById("mycanvas");
+            var ctx = c.getContext("2d");
+            ctx.fillStyle = "#99b4ca";
+            ctx.fillRect(0, 0, c.width, c.height);
+            var count = 1;
+            for(var i = 0; i < c.height; i += 100){
+                for(var j = 0; j < c.width; j += 100){
+                    if (count % 7 == 0){
+                        for(var k = i; k < i+100; k+=50){
+                            for(var l = j; l < j+100; l+=50){
+                                ctx.fillStyle = getRandomColor();
+                                ctx.fillRect(l, k, 50, 50);
+                                ctx.fillStyle = getRandomColor();
+                                ctx.fillRect(l+5, k+5, 40, 40);
+                            }
+                        }
+                    } else if (count % 11 == 0){
+                        for(var k = i; k < i+100; k+=25){
+                            for(var l = j; l < j+100; l+=25){
+                                ctx.fillStyle = getRandomColor();
+                                ctx.fillRect(l, k, 50, 50);
+                                ctx.fillStyle = getRandomColor();
+                                ctx.fillRect(l+5, k+5, 40, 40);
+                            }
+                        }
+                    } else {
+                        ctx.fillStyle = getRandomColor();
+                        ctx.fillRect(j, i, 100, 100);
+                        ctx.fillStyle = getRandomColor();
+                        ctx.fillRect(j+5, i+5, 90, 90);
+                    }
+                    count++;
+                }
+            }
+        }
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+        update();
+    </script>
+</body>
+</html>

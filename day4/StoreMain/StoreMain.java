@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.math.BigDecimal;
 import java.io.IOException;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 interface Printable{
     public void print();
@@ -43,16 +46,16 @@ class Products implements Printable{
         return(this.stockQuantity);
     }
 
-    public void setStockQuantity(int stockQuantity){
-        this.stockQuantity = stockQuantity;
+    public void setStockQuantity(String stockQuantity){
+        this.stockQuantity = Integer.parseInt(stockQuantity);
     }
 
     public int getCartQuantity(){
         return(this.cartQuantity);
     }
 
-    public void setCartQuantity(int cartQuantity){
-        this.cartQuantity = cartQuantity;
+    public void setCartQuantity(String cartQuantity){
+        this.cartQuantity = Integer.parseInt(cartQuantity);
     }
 
     public String toString(){
@@ -67,11 +70,13 @@ class Products implements Printable{
 class Cars extends Products implements Printable{
     String make = "";
     String model = "";
-    public Cars(String name, String price, String make, String model){
+    public Cars(String name, String price, String make, String model, String stock, String cart){
         setName(name);
         setPrice(price);
         setMake(make);
         setModel(model);
+        setStockQuantity(stock);
+        setCartQuantity(cart);
     }
 
     public String getMake(){
@@ -96,7 +101,8 @@ class Cars extends Products implements Printable{
     }
 
     public void print(){
-        System.out.println("Product is a laptop: " + getMake() + ", " + getModel());
+        System.out.println("This product is a car: ");
+        System.out.println(toString() + "\n");
     }
 }
 
@@ -104,11 +110,13 @@ class Laptop extends Products implements Printable{
     private String brand = "";
     private int memory = 0;
 
-    public Laptop(String name, String price, String brand, String memory){
+    public Laptop(String name, String price, String brand, String memory, String stock, String cart){
         setName(name);
         setPrice(price);
         setBrand(brand);
         setMemory(memory);
+        setStockQuantity(stock);
+        setCartQuantity(cart);
     }
 
     public String getBrand(){
@@ -133,7 +141,8 @@ class Laptop extends Products implements Printable{
     }
 
     public void print(){
-        System.out.println("Product is a laptop: " + getBrand() + ", " + getMemory());
+        System.out.println("This product is a laptop: ");
+        System.out.println(toString() + "\n");
     }
 }
 
@@ -141,11 +150,13 @@ class House extends Products implements Printable{
     private String city = "";
     private String area = "";
 
-    public House(String name, String price, String city, String area){
+    public House(String name, String price, String city, String area, String stock, String cart){
         setName(name);
         setPrice(price);
         setCity(city);
         setArea(area);
+        setStockQuantity(stock);
+        setCartQuantity(cart);
     }
 
     public String getCity(){
@@ -170,7 +181,8 @@ class House extends Products implements Printable{
     }
 
     public void print(){
-        System.out.println("Product is a house: " + getCity() + ", " + getArea());
+        System.out.println("This product is a house: ");
+        System.out.println(toString() + "\n");
     }
 }
 
@@ -178,11 +190,13 @@ class Furnatures extends Products implements Printable{
     private String type = "";
     private String material = "";
 
-    public Furnatures(String name, String price, String type, String material){
+    public Furnatures(String name, String price, String type, String material, String stock, String cart){
         setName(name);
         setPrice(price);
         setType(type);
         setMaterial(material);
+        setStockQuantity(stock);
+        setCartQuantity(cart);
     }
 
     public String getType(){
@@ -207,7 +221,8 @@ class Furnatures extends Products implements Printable{
     }
 
     public void print(){
-        System.out.println("Product is a furnature: " + getType() + ", " + getMaterial());
+        System.out.println("This product is a furnature: ");
+        System.out.println(toString() + "\n");
     }
 }
 
@@ -215,11 +230,13 @@ class Pets extends Products implements Printable, ProductWithColor{
     private String breed = "";
     private String color = "";
 
-    public Pets(String name, String price, String breed, String color){
+    public Pets(String name, String price, String breed, String color, String stock, String cart){
         setName(name);
         setPrice(price);
         setBreed(breed);
         setColor(color);
+        setStockQuantity(stock);
+        setCartQuantity(cart);
     }
 
     public String getBreed(){
@@ -244,7 +261,8 @@ class Pets extends Products implements Printable, ProductWithColor{
     }
 
     public void print(){
-        System.out.println("Product is a pet: " + getBreed() +", " + getColor());
+        System.out.println("This product is a pet: ");
+        System.out.println(toString() + "\n");
     }
 }
 
@@ -258,21 +276,24 @@ class ProductDatabase{
             switch(arg){
                 case "stock":
                     products.get(i).print();
-                    totalPrice.add(products.get(i).getPrice());
+                    totalPrice = totalPrice.add(products.get(i).getPrice());
+                    totalQuantity += products.get(i).getStockQuantity();
                 break;
                 case "cart":
                 if (products.get(i).getCartQuantity() != 0){
                     products.get(i).print();
                     totalPrice.add(products.get(i).getPrice());
+                    totalQuantity += products.get(i).getCartQuantity();
                 }
                 break;
             }
         }
         System.out.println("There is quantity is " + totalQuantity);
         System.out.println("The total price is " + totalPrice);
-        BigDecimal vat = totalPrice;
-        vat = vat.multiply(new BigDecimal(0.12f));
-        System.out.println("The total price after vat: " + (totalPrice.add(vat)));
+        BigDecimal vat = totalPrice.multiply(new BigDecimal(0.12));
+        totalPrice = totalPrice.add(vat);
+        totalPrice = totalPrice.setScale(2, java.math.RoundingMode.HALF_EVEN);
+        System.out.println("The total price after vat: " + (totalPrice));
     }
 
     public void printDisplay(String arg1){
@@ -312,7 +333,7 @@ class ProductDatabase{
     public void searchProduct(String arg1, String arg2){
         for(int i = 0; i < products.size(); i++){
             switch(arg1){
-                case "name": if (products.get(i).getName() == arg2){products.get(i).print();} break;
+                case "name": if (products.get(i).getName().equals(arg2)){products.get(i).print();} break;
                 case "price": if (products.get(i).getPrice().equals(new BigDecimal(arg2))){products.get(i).print();} break;
                 default: break;
             }
@@ -321,28 +342,29 @@ class ProductDatabase{
 
     public void addProduct(String arg1, String arg2, String arg3, String arg4, String arg5){
         for(int i = 0; i < products.size(); i++){
-            if (products.get(i).getName() == arg2){
+            if (products.get(i).getName().equals(arg2)){
                 System.out.println("That name was already taken, try another one!");
-                break;
-            } else if (i == products.size()){
-                switch(arg1){
-                    case "cars": products.add(new Cars(arg2, arg3, arg4, arg5)); break;
-                    case "laptop": products.add(new Laptop(arg2, arg3, arg4, arg5)); break;
-                    case "house": products.add(new House(arg2, arg3, arg4, arg5)); break;
-                    case "furnatures": products.add(new Furnatures(arg2, arg3, arg4, arg5)); break;
-                    case "pets": products.add(new Pets(arg2, arg3, arg4, arg5)); break;
-                    default: break;
-                }
+                return;
             }
         }
+        switch(arg1){
+            case "cars": products.add(new Cars(arg2, arg3, arg4, arg5, "1", "0")); break;
+            case "laptop": products.add(new Laptop(arg2, arg3, arg4, arg5, "1", "0")); break;
+            case "house": products.add(new House(arg2, arg3, arg4, arg5, "1", "0")); break;
+            case "furnatures": products.add(new Furnatures(arg2, arg3, arg4, arg5, "1", "0")); break;
+            case "pets": products.add(new Pets(arg2, arg3, arg4, arg5, "1", "0")); break;
+            default: break;
+        }
+        System.out.println("The product has been successfully added to the system");
     }
 
     public void buyProduct(String arg1, String arg2){
         for(int i = 0; i < products.size(); i++){
-            if (products.get(i).getName() == arg1){
+            if (products.get(i).getName().equals(arg1)){
                 Products prod = products.get(i);
                 if (prod.getStockQuantity() >= prod.getCartQuantity() + Integer.parseInt(arg2)){
-                    prod.setCartQuantity(Integer.parseInt(arg2));
+                    prod.setCartQuantity(arg2);
+                    System.out.println("You successfully added the product to your cart!");
                 } else {
                     System.out.println("There isnt enough stock");
                     System.out.println("The remaining stock is: " + 
@@ -357,13 +379,15 @@ class ProductDatabase{
 
     public void removeProduct(String arg1, String arg2){
         for(int i = 0; i < products.size(); i++){
-            if (products.get(i).getName() == arg2){
+            if (products.get(i).getName().equals(arg2)){
                 switch(arg1){
                     case "stock":
                         products.remove(i);
+                        System.out.println("You removed the item from the system!");
                         break;
                     case "cart":
-                        products.get(i).setCartQuantity(0);
+                        products.get(i).setCartQuantity("0");
+                        System.out.println("You removed all the item from your cart!");
                         break;
                     default: break;
                 }
@@ -373,12 +397,13 @@ class ProductDatabase{
 
     public void setProduct(String arg1, String arg2, String arg3){
         for(int i = 0; i < products.size(); i++){
-            if (products.get(i).getName() == arg2){
+            if (products.get(i).getName().equals(arg2)){
                 switch(arg1){
-                    case "stock": products.get(i).setStockQuantity(Integer.parseInt(arg3)); break;
+                    case "stock": products.get(i).setStockQuantity(arg3); break;
                     case "cart": 
                         if (products.get(i).getStockQuantity() >= Integer.parseInt(arg3)){
-                            products.get(i).setCartQuantity(Integer.parseInt(arg3)); break;
+                            System.out.println("You successfully added the product to your cart!");
+                            products.get(i).setCartQuantity(arg3); break;
                         } else {
                             System.out.println("There isnt enough stock");
                             System.out.println("The remaining stock is: " + 
@@ -395,22 +420,31 @@ class ProductDatabase{
         BigDecimal totalPrice = new BigDecimal(0);
         int totalQuantity = 0;
         for(int i = 0; i < products.size(); i++){
-            if (products.get(i).getStockQuantity() != 0){
-                products.get(i).print();
-                totalPrice.add(products.get(i).getPrice());
+            if (products.get(i).getCartQuantity() != 0){
+                totalQuantity += products.get(i).getCartQuantity();
+                for(int j = 0; j < products.get(i).getCartQuantity(); j++){
+                    products.get(i).print();
+                    totalPrice = totalPrice.add(products.get(i).getPrice());
+                }
             }
         }
         System.out.println("There is quantity is " + totalQuantity);
         System.out.println("The total price is " + totalPrice);
-        System.out.println("The total price after vat: " + (totalPrice.add(totalPrice.multiply(new BigDecimal(12)))));
+        BigDecimal vat = totalPrice.multiply(new BigDecimal(0.12));
+        totalPrice = totalPrice.add(vat);
+        totalPrice = totalPrice.setScale(2, java.math.RoundingMode.HALF_EVEN);
+        System.out.println("The total price after vat: " + (totalPrice));
         if (totalPrice.compareTo(money) == 1){
             System.out.println("---");
             System.out.println("You dont have enough balance, try again!");
         } else {
             for(int i = 0; i < products.size(); i++){
-                if (products.get(i).getCartQuantity() != 0){
-                    products.get(i).setStockQuantity(products.get(i).getStockQuantity() - products.get(i).getCartQuantity());
-                    products.get(i).setCartQuantity(0);
+                int stockQuantity = products.get(i).getStockQuantity();
+                int cartQuantity = products.get(i).getCartQuantity();
+                int remaining = stockQuantity - cartQuantity;
+                if (stockQuantity != 0){
+                    products.get(i).setStockQuantity(Integer.toString(remaining));
+                    products.get(i).setCartQuantity("0");
                 }
             }
             System.out.println("Your total change is " + totalPrice.subtract(money));
@@ -432,21 +466,59 @@ class ProductDatabase{
             File file = new File(filename);
             Scanner scan = new Scanner(file);
             while (scan.hasNextLine()) {
-                Products prod = new Products();
                 String data = scan.nextLine();
-                Products.setQuotes(data.substring(0, nthIndex(data, '@', 1)));
-                Products.setReference(data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)));
-                Products.setCategory(data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)));
-                try{
-                    int number = Integer.parseInt(data.substring(nthIndex(data, '@', 3)+1, data.length()));
-                    Products.setCounter(number);
+                if (data.length() != 0){
+                    Products prod = new Products();
+                    switch(data.substring(0, nthIndex(data, '@', 1))){
+                        case "Cars": products.add( new Cars(
+                            data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)),
+                            data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)),
+                            data.substring(nthIndex(data, '@', 3)+1, nthIndex(data, '@', 4)),
+                            data.substring(nthIndex(data, '@', 4)+1, nthIndex(data, '@', 5)),
+                            data.substring(nthIndex(data, '@', 5)+1, nthIndex(data, '@', 6)),
+                            data.substring(nthIndex(data, '@', 6)+1, data.length())
+                        ));
+                        break;
+                        case "Laptop": products.add( new Laptop(
+                            data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)),
+                            data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)),
+                            data.substring(nthIndex(data, '@', 3)+1, nthIndex(data, '@', 4)),
+                            data.substring(nthIndex(data, '@', 4)+1, nthIndex(data, '@', 5)),
+                            data.substring(nthIndex(data, '@', 5)+1, nthIndex(data, '@', 6)),
+                            data.substring(nthIndex(data, '@', 6)+1, data.length())
+                        ));
+                        break;
+                        case "House": products.add( new House(
+                            data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)),
+                            data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)),
+                            data.substring(nthIndex(data, '@', 3)+1, nthIndex(data, '@', 4)),
+                            data.substring(nthIndex(data, '@', 4)+1, nthIndex(data, '@', 5)),
+                            data.substring(nthIndex(data, '@', 5)+1, nthIndex(data, '@', 6)),
+                            data.substring(nthIndex(data, '@', 6)+1, data.length())
+                        ));
+                        break;
+                        case "Furnatures": products.add( new Furnatures(
+                            data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)),
+                            data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)),
+                            data.substring(nthIndex(data, '@', 3)+1, nthIndex(data, '@', 4)),
+                            data.substring(nthIndex(data, '@', 4)+1, nthIndex(data, '@', 5)),
+                            data.substring(nthIndex(data, '@', 5)+1, nthIndex(data, '@', 6)),
+                            data.substring(nthIndex(data, '@', 6)+1, data.length())
+                        ));
+                        break;
+                        case "Pets": products.add( new Pets(
+                            data.substring(nthIndex(data, '@', 1)+1, nthIndex(data, '@', 2)),
+                            data.substring(nthIndex(data, '@', 2)+1, nthIndex(data, '@', 3)),
+                            data.substring(nthIndex(data, '@', 3)+1, nthIndex(data, '@', 4)),
+                            data.substring(nthIndex(data, '@', 4)+1, nthIndex(data, '@', 5)),
+                            data.substring(nthIndex(data, '@', 5)+1, nthIndex(data, '@', 6)),
+                            data.substring(nthIndex(data, '@', 6)+1, data.length())
+                        ));
+                        break;
+                        default: break;
+                    }
                 }
-                catch (NumberFormatException ex){
-                    ex.printStackTrace();
-                }
-                this.quotes.add(Products);
             }
-            return true;
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -460,16 +532,62 @@ class ProductDatabase{
 
         try {
             FileWriter f2 = new FileWriter(fnew, false);
-            for(int i = 0; i < this.quotes.size(); i++){
-                f2.write(quotes.get(i).getQuotes() + "@");
-                f2.write(quotes.get(i).getReference() + "@");
-                f2.write(quotes.get(i).getCategory() + "@");
-                f2.write(quotes.get(i).getCounter() + "\n");
+            for(int i = 0; i < this.products.size(); i++){
+                if (products.get(i) instanceof Cars){
+                    Cars prod = (Cars)products.get(i);
+                    f2.write("Cars@");
+                    f2.write(prod.getName() + "@");
+                    f2.write(prod.getPrice() + "@");
+                    f2.write(prod.getMake() + "@");
+                    f2.write(prod.getModel() + "@");
+                    f2.write(prod.getStockQuantity() + "@");
+                    f2.write(prod.getCartQuantity() + "\n");
+                } else if (products.get(i) instanceof Laptop){
+                    Laptop prod = (Laptop)products.get(i);
+                    f2.write("Laptop@");
+                    f2.write(prod.getName() + "@");
+                    f2.write(prod.getPrice() + "@");
+                    f2.write(prod.getBrand() + "@");
+                    f2.write(prod.getMemory() + "@");
+                    f2.write(prod.getStockQuantity() + "@");
+                    f2.write(prod.getCartQuantity() + "\n");
+                } else if (products.get(i) instanceof House){
+                    House prod = (House)products.get(i);
+                    f2.write("House@");
+                    f2.write(prod.getName() + "@");
+                    f2.write(prod.getPrice() + "@");
+                    f2.write(prod.getCity() + "@");
+                    f2.write(prod.getArea() + "@");
+                    f2.write(prod.getStockQuantity() + "@");
+                    f2.write(prod.getCartQuantity() + "\n");
+                } else if (products.get(i) instanceof Furnatures){
+                    Furnatures prod = (Furnatures)products.get(i);
+                    f2.write("Furnatures@");
+                    f2.write(prod.getName() + "@");
+                    f2.write(prod.getPrice() + "@");
+                    f2.write(prod.getType() + "@");
+                    f2.write(prod.getMaterial() + "@");
+                    f2.write(prod.getStockQuantity() + "@");
+                    f2.write(prod.getCartQuantity() + "\n");
+                } else if (products.get(i) instanceof Pets){
+                    Pets prod = (Pets)products.get(i);
+                    f2.write("Pets@");
+                    f2.write(prod.getName() + "@");
+                    f2.write(prod.getPrice() + "@");
+                    f2.write(prod.getBreed() + "@");
+                    f2.write(prod.getColor() + "@");
+                    f2.write(prod.getStockQuantity() + "@");
+                    f2.write(prod.getCartQuantity() + "\n");
+                }
             }
             f2.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int nthIndex(String string, char ch, int n) {
+        return string.length()-string.replaceAll("^([^"+ch+"]*"+ch+"){"+n+"}", "").length()-1;
     }
 }
 
@@ -477,6 +595,9 @@ public class StoreMain{
     public static void main(String[] args){
         ProductDatabase pd = new ProductDatabase();
         pd.readFromFile("ProductDatabase.txt");
+        for(int i = 0; i < args.length; i++){
+            args[i] = args[i].toLowerCase();
+        }
         if (args.length == 1){
             switch(args[0]){
                 case "help": help(); break;
@@ -498,8 +619,12 @@ public class StoreMain{
             }
         } else if (args.length == 4){
             switch(args[0]){
-                case "add": pd.addProduct(args[1], args[2], args[3], args[4], args[5]); break;
                 case "set": pd.setProduct(args[1], args[2], args[3]); break;
+                default: break;
+            }
+        } else if (args.length == 6){
+            switch(args[0]){
+                case "add": pd.addProduct(args[1], args[2], args[3], args[4], args[5]); break;
                 default: break;
             }
         }
